@@ -1,0 +1,5 @@
+node_modules/
+.DS_Store
+nw
+node-webkit.app/
+*.log

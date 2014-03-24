@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Asset-Server Uploader (Alpha 0.0.2)</title>
+    <link rel="stylesheet" href="public/css/fontello.css" type="text/css">
+    <link rel="stylesheet" href="public/css/animation.css" type="text/css">
+    <style>
+      body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        margin: 0px;
+        padding: 0;
+      }
+      button,input,a {
+        -webkit-app-region: no-drag;
+      }
+      button:focus {
+        outline: none;
+      }
+      p, span, em, i, strong, div {
+        cursor: default;
+      }
+      a, a *, button, button * {
+        cursor: pointer !important;
+      }
+      ::selection {
+        background: transparent !important;
+      }
+      body, html {
+        min-height: 100%;
+        height: 100%;
+        min-width: 640px;
+      }
+      #container {
+        display: table;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+      #holder {
+        border: 0px;
+        background-color: #eee;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        text-align: center;
+        transition: 0.1s all;
+        position: relative;
+        display: table-cell;
+        overflow: scroll;
+      }
+      .holder-cell {
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        display: table;
+        position: absolute;
+        vertical-align: middle;
+      }
+      #help {
+        display: table-cell;
+        background-color: #eee;
+        vertical-align: middle;
+        -webkit-transition: all 0.2s;
+        -moz-transition: all 0.2s;
+        -ms-transition: all 0.2s;
+        -o-transition: all 0.2s;
+        transition: all 0.2s;
+        border: 13px dashed #ddd;
+      }
+      #holder.hover {
+        cursor: copy;
+      }
+      #holder.hover #help {
+        background-color: white;
+        border: 13px dashed #eee;
+      }
+      #holder #help i {
+        position: relative;
+        top: -5px;
+        display: block;
+        font-size: 128px;
+        margin-bottom: 10px;
+        -webkit-transition: all 0.5s;
+        -moz-transition: all 0.5s;
+        -ms-transition: all 0.5s;
+        -o-transition: all 0.5s;
+        transition: all 0.5s;
+      }
+      #holder.hover #help i {
+        top: 0px;
+      }
+      #keys {
+        display: table-cell;
+        padding-top: 16px;
+      }
+      #holder.hover {
+        background: white;
+      }
+      #header {
+        background: #33154C;  
+        display: block;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        height: 64px;
+        display: table-row;
+      }
+      #bar {
+        display: table-row;
+      }
+      #bar h2 {
+        margin: 24px 0 0 16px;
+        font-size: 16px;
+        float: left;
+      }
+      #bar h2 em {
+        font-style: normal;
+      }
+      #bar .bar {
+        width: 100%;
+        height: 64px;
+        background-color: #662D91;
+        color: white;
+        display: none;
+      }
+      #bar button {
+        float: right;
+        margin: 14px 16px 0 0;
+      }
+      button {
+        border: 1px solid white;
+        background: transparent;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 8px 16px;
+        text-align: center;
+      }
+      button i {
+        margin-right: 8px;
+      }
+      button:hover {
+        color: #662D91;
+        background: white;
+        cursor: pointer;
+      }
+      #logo {
+        float: left;
+        width: 64px;
+        height: 64px;
+      }
+      #header ul {
+        float: left;
+        margin: 0;
+        width: 560px;
+        padding: 0;
+        list-style: none;
+        display: table;
+        height: 64px;
+      }
+      #header ul > li {
+        padding: 16px 0 0 16px;
+        float: left;
+        height: 100%;
+        margin: 0 0 0 0;
+        vertical-align: middle;
+        display: table-cell;
+      }
+      #header ul > li input {
+        font-size: 11px;
+        margin: 0;
+        padding: 8px;
+        height: 14px;
+        width: 152px;
+        color: white;
+        background: #33154C;
+        border: 1px solid #808080;
+        transition: 0.1s all;
+      }
+      #header ul > li input.error {
+        background-color: #FFAAAA;
+      }
+      #header ul > li input::-webkit-input-placeholder {
+        color: #808080;
+      }
+      #header ul > li input.error::-webkit-input-placeholder {
+        color: #FF0000;
+      }
+      .clear {
+        clear: both;
+      }
+      h2 {
+        font-size: 24px;
+      }
+      #keys ul > li {
+        margin: 0;
+        padding: 0;
+      }
+      #keys ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      #keys .key {
+        font-size: 16px;
+        border: 1px solid #212121;
+        padding: 8px;
+        width: 320px;
+      }
+      #keys .key-row {
+        border-top: 1px solid #808080;
+        border-left: 1px solid #808080;
+        border-right: 1px solid #808080;
+        margin: 0 16px;
+        padding: 16px;
+        height: 64px;
+      }
+      #keys .key-row:nth-child(even) {
+        background: #eee;
+      }
+      #keys .key-row:last-child {
+        border-bottom: 1px solid #808080;
+        margin-bottom: 16px;
+      }
+      .hidden {
+        display: none;
+      }
+      #holder-keys {
+        overflow: scroll;
+        width: 100%;
+        height: 100%;
+        background: white;
+      }
+      .key-row .icon-doc {
+        float: left;
+      }
+      .key-row .icon-trash {
+        float: right;
+        display: none;
+        font-size: 64px;
+        color: #212121;
+      }
+      .key-row .icon-trash:hover {
+        color: #808080;
+      }
+      .key-info {
+        margin-top: 6px;
+        text-align: left;
+        position: relative;
+      }
+      .key-info i {
+        position: relative;
+        left: -6px;
+      }
+      .key-info strong, .key-info input {
+        float: left;
+      }
+      .key-info strong, .key-info .final-link {
+        margin-top: 11px;
+        float: left;
+        cursor: context-menu;
+      }
+      .hostname {
+        width: 200px;
+        display: block;
+        margin-right: 10px;
+        float: left;
+        overflow: hidden;
+        margin-top: 11px;
+      }
+      .filename {
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      #holder.hover #holder-help {
+        opacity: 0.8 !important; 
+      }
+      #holder-help {
+        transition: opacity 0.2s;
+      }
+      #loader {
+        margin-right: 10px;
+      }
+      .icon-ok-circled, .icon-cancel-circled {
+        display: none;
+      }
+      .uploaded .icon-ok-circled, .failed .icon-cancel-circled {
+        font-size: 64px;
+        color: #212121;
+        display: block;
+        position: absolute;
+        top: -14px;
+        right: 0;
+        text-align: right;
+      }
+      .uploaded {
+        background-color: #AAFFAA !important;
+      }
+      .failed {
+        background-color: #FFAAAA !important;
+      }
+      .failed .icon-cancel-circled {
+        color: #AA0000;
+      }
+    </style>
+    <script src="jquery.js"></script>
+  </head>
+  <body style="-webkit-app-region: drag">
+    <div id="container">
+      <div id="header">
+        <div style="background-image: url('asset-server-logo.svg'); background-size: cover; width: 64px; height: 64px;" id="logo"></div>
+        <ul>
+          <li><input id="setting-hostname" placeholder="Hostname" value=""></li>
+          <li><input id="setting-apikey" placeholder="API Key" value=""></li>
+          <li><input id="setting-apisecret" placeholder="API Secret" type="password" value=""></li>
+        </ul>
+        <div class="clear"></div>
+      </div>
+      <div id="bar">
+        <div class="bar">
+          <h2>
+            <i class="icon-spin1 animate-spin hidden" id="loader"></i>
+            <em id="status1">Ready to upload</em>
+            <span id="statusNum">0</span>
+            <em id="status2">file(s)</em>
+          </h2>
+          <button><i class="icon-upload"></i><span>Upload</span></button>
+        </div>
+      </div>
+      <div id="holder">
+        <div class="holder-cell" id="holder-keys">
+          <div id="keys">
+            <ul id="keys-rows">
+              <li data-id="-1" data-name="" data-path="" class="key-row key-row-orig" style="display: none">
+                <a class="icon-trash" href="#"></a>
+                <div class="key-info">
+                  <i class="icon-doc"></i>
+                  <div class="filename"></div>
+                  <strong><i class="icon-link"></i></strong>
+                  <span class="hostname"></span>
+                  <input class="key">
+                  <span class="final-link"></span>
+                  <i class="icon-ok-circled ok"></i>
+                  <i class="icon-cancel-circled ok"></i>
+                  <div class="clear"></div>
+                </div>
+                <div class="clear"></div>
+              </li>
+            </ul>
+            <div class="clear"></div>
+          </div>
+        </div>
+        <div class="holder-cell" id="holder-help">
+          <div id="help">
+            <i class="icon-doc"></i>
+            <strong>Drag and drop file(s) to upload</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+
+      var hostname = $('#setting-hostname');
+      var apikey = $('#setting-apikey');
+      var apisecret = $('#setting-apisecret');
+      var keys = $('#keys');
+      var help = $('#help');
+      var loading = $('#loading');
+      var bar = $('#bar .bar');
+
+      var status1 = $('#status1');
+      var status2 = $('#status2');
+
+      var statusNum = $('#statusNum');
+
+      var fileNum = 0;
+
+      var async = require('async');
+      var fs = require('fs');
+
+      var gui = require('nw.gui');
+      var win = gui.Window.get();
+
+      var uploading = false;
+
+      var maximized = false;
+
+      var filelist = [];
+
+      var AssetServerClient = require('asset-server-client').AssetServerClient;
+
+      if(localStorage.hostname) hostname.val(localStorage.hostname);
+      if(localStorage.apikey) apikey.val(localStorage.apikey);
+      if(localStorage.apisecret) apisecret.val(localStorage.apisecret);
+
+      function copyToClipboard(text) {
+        window.prompt("Copy to clipboard and press enter", text);
+      }
+
+      function createAssetServerClient() {
+
+        var domain = hostname.val().split(':')[0];
+        var port = hostname.val().split(':')[1];
+        var bucket = hostname.val().split('.')[0];
+
+        return new AssetServerClient({
+          domain: domain,
+          port: port,
+          bucket: bucket,
+          apiKey: apikey.val(),
+          apiSecret: apisecret.val()
+        });
+      }
+
+      var assetServerClient = createAssetServerClient();
+
+      // prevent default behavior from changing page on dropped file
+      window.ondragover = function(e) { e.preventDefault(); return false };
+
+      window.ondragleave = function(e) {
+        e.preventDefault();
+        $('#holder').removeClass('hover');
+        return false;
+      };
+
+      window.ondrop = function(e) { 
+        e.preventDefault();
+        return false;
+      };
+
+      var holder = document.getElementById('holder');
+
+      holder.ondragover = function () { $(this).addClass('hover'); return false; };
+
+      holder.ondragend = function () { $(this).removeClass('hover'); return false; };
+
+      holder.ondrop = function (e) {
+        e.preventDefault();
+        $(this).removeClass('hover');
+        win.focus();
+
+        if(hostname.val() && apikey.val() && apisecret.val()) {
+
+          filelist = [];
+
+          $('#keys-rows').hide();
+
+          $('#keys-rows .key-clone').remove();
+
+          for (var i = 0; i < e.dataTransfer.files.length; ++i) {
+
+            var file = e.dataTransfer.files[i];
+            filelist.push(file);
+            var cloneRow = $('.key-row-orig').clone().removeClass('key-row-orig').addClass('key-clone');
+
+            cloneRow.attr('data-name', file.name);
+            cloneRow.attr('data-id', i);
+            cloneRow.attr('data-path', file.path);
+
+            cloneRow.find('.hostname').html(assetServerClient.opts.domain+"/");
+            cloneRow.find('.filename').html(file.name+" ("+Math.floor(file.size/1024)+"KB "+file.type+")");
+            cloneRow.find('.key').val(file.name);
+
+            var index = -1;
+
+            cloneRow.find('.icon-trash').click(function(evt) {
+              //e.dataTransfer.files.splice();
+              for(var ii = 0; i < e.dataTransfer.files.length; ii++) {
+                if(e.dataTransfer.files[ii].name === $(evt.target).attr('data-name')) {
+                  index = ii;
+                }
+              }
+              e.dataTransfer.files.splice(index, 1);
+              $(evt.target).remove();
+            });
+            
+            cloneRow.appendTo('#keys-rows').show();
+
+          }
+
+          $('#keys-rows').show();
+          $('#holder-help').css({ "opacity": 0 });
+          bar.slideDown('fast', function() {
+
+            var height = $('#header').outerHeight() + $('#keys-rows').outerHeight() + $('#bar').outerHeight() + 32;
+
+            if(height > window.screen.availHeight) { if(!maximized) win.maximize(); }
+            else {
+              win.resizeTo(640, height);
+              maximized = false;
+            }
+
+          }).find('h2 span').html(i);
+
+
+        }
+        else {
+          if(!hostname.val()) hostname.addClass('error');
+          if(!apikey.val()) apikey.addClass('error');
+          if(!apisecret.val()) apisecret.addClass('error');
+        }
+
+      };
+
+      win.on('maximize', function() {
+        maximized = true;
+      });
+
+      win.on('unmaximize', function() {
+        maximized = false;
+      });
+
+      $('#bar button').click(function(evt) {
+
+        evt.preventDefault();
+
+        if(!uploading) {
+
+          uploading = true;
+          var uploadText = $(this).find('span');
+          uploadText.html('Uploading..')
+          $('#loader').css({ "display": "inline-block" });
+
+          status1.html('Uploading');
+
+          $('.key-row input.key').prop('disabled', true);
+
+          async.forEachLimit(filelist, 1, function(file, callback) {
+
+            var row = $('.key-row[data-path="'+file.path+'"]');
+            var input = row.find('input');
+            var hostname = row.find('.hostname');
+
+            hostname.hide();
+            input.hide();
+
+            var key = input.val();
+            if(key[0] !== '/') key = '/'+key;
+
+            var link = "http://"+hostname.html()+key.substr(1);
+            row.find('.final-link').html(link).click(function() {
+              console.log(link);
+              copyToClipboard(link);
+            }).show();
+
+            var fileStream = fs.createReadStream(file.path);
+
+            var request = assetServerClient.put(key, {
+              'Content-Type': file.type,
+              'Content-Length': file.size
+            });
+
+            console.log('uploading '+file.name, file, request);
+
+            request.on('end', function(result) {
+              console.log(result);
+              row.addClass('uploaded');
+              fileNum++;
+              callback();
+            });
+
+            request.on('progress', function(e) {
+              console.log(e);
+            });
+
+            request.on('error', function(err) {
+              fileNum++;
+              console.log(err);
+              row.addClass('failed');
+              callback(err);
+            });
+
+            fileStream.pipe(request);
+
+          }, function(err) {
+            if(err) {
+              console.log(err);
+              uploading = false;
+              status1.html('An error occured: '+err);
+              status2.html('');
+              bar.find('h2 span').html('');
+              $('#loader').hide();
+              uploadText.html('Upload');
+            }
+            else {
+              uploading = false;
+              uploadText.html('Upload');
+              $('#loader').hide();
+              status1.html('Success! Uploaded');
+              console.log('success');
+            }
+          });
+
+        }
+
+
+      });
+
+      function removeError() {
+        $(this).removeClass('error');
+      }
+
+
+      function saveSettingsToLocalStorage() {
+        localStorage.hostname = hostname.val();
+        localStorage.apikey = apikey.val();
+        localStorage.apisecret = apisecret.val();
+
+        // renew client settings
+        assetServerClient = createAssetServerClient();
+      }
+
+      hostname.bind({
+        'focus': removeError,
+        'blur': saveSettingsToLocalStorage
+      });
+      apikey.bind({
+        'focus': removeError,
+        'blur': saveSettingsToLocalStorage
+      });
+      apisecret.bind({
+        'focus': removeError,
+        'blur': saveSettingsToLocalStorage
+      });
+
+
+    </script>
+  </body>
+</html>
