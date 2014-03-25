@@ -1,6 +1,6 @@
 node_modules/
 .DS_Store
 nw
-node-webkit.app/
+asset-server-desktop.app/
 *.log
 *.nw
