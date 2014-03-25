@@ -4,7 +4,10 @@ Desktop client to upload files to an asset-server (https://github.com/aprnd/asse
 
 ## Download
 
+- Alpha 0.1.0:
+
 OSX: http://aprnd.asset-server.com/asset-server-desktop-0.1.0-osx.zip
+Windows: http://aprnd.asset-server.com/asset-server-desktop-0.1.0-windows.zip
 
 ## Screenshots
 
@@ -14,7 +17,7 @@ OSX: http://aprnd.asset-server.com/asset-server-desktop-0.1.0-osx.zip
 
 ## Version history
 
-- 0.1.0: Initial OSX/Windows release
+- 0.1.0: Initial OSX/Windows alpha release
 
 ## Requirements
 
