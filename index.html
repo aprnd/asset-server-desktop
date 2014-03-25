@@ -591,8 +591,17 @@
             hostname.hide();
             input.hide();
 
-            var key = encodeURIComponent(input.val());
-            if(key[0] !== '/') key = '/'+key;
+            //var key = encodeURIComponent(input.val());
+            //
+            
+            var keySplit = input.val().split('/');
+            var key = "";
+
+            for( var i=0; i < keySplit.length; i++ ) {
+
+              key += "/"+encodeURIComponent(keySplit[i]);
+
+            }
 
             var link = "http://"+hostname.html()+key.substr(1);
             row.find('.final-link').val(link).show();
