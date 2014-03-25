@@ -2,9 +2,9 @@
 
 Desktop client to upload files to an asset-server (https://github.com/aprnd/asset-server) instance. Built on top of node-webkit.
 
-![alt text](http://tester.asset-server.com/asset-server-desktop-1.png  "Screenshot 1")
-![alt text](http://tester.asset-server.com/asset-server-desktop-2.png  "Screenshot 2")
-![alt text](http://tester.asset-server.com/asset-server-desktop-3.png  "Screenshot 2")
+![alt text](http://tester.asset-server.com/asset-server-desktop-a.png  "Screenshot")
+![alt text](http://tester.asset-server.com/asset-server-desktop-b.png  "Screenshot")
+![alt text](http://tester.asset-server.com/asset-server-desktop-c.png  "Screenshot")
 
 ## Version history
 

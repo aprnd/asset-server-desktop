@@ -489,6 +489,7 @@
         if(hostname.val() && apikey.val() && apisecret.val()) {
 
           filelist = [];
+          bar.find('button').show();
 
           status1.html('Ready to upload');
           status2.html('file(s)');
@@ -632,12 +633,14 @@
               status1.html('An error occured: '+err);
               status2.html('');
               bar.find('h2 span').html('');
+              bar.find('button').hide();
               $('#loader').hide();
               uploadText.html('Upload');
             }
             else {
               uploading = false;
               uploadText.html('Upload');
+              bar.find('button').hide();
               $('#loader').hide();
               status1.html('Success! Uploaded');
               console.log('success');
