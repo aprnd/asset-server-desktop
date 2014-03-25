@@ -1,6 +1,6 @@
 {
   "name": "asset-server-desktop",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Desktop app to upload to an asset-server instance",
   "main": "index.html",
   "dependencies": {
@@ -16,6 +16,7 @@
   },
   "author": "Applied Research and Development",
   "license": "ISC",
+  "readmeFilename": "README.md",
   "bugs": {
     "url": "https://github.com/aprnd/asset-server-desktop/issues"
   },

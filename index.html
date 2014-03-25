@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Asset-Server Uploader (Alpha 0.0.2)</title>
+    <title>Asset-Server Uploader</title>
     <link rel="stylesheet" href="public/css/fontello.css" type="text/css">
     <link rel="stylesheet" href="public/css/animation.css" type="text/css">
     <style>
@@ -69,6 +69,8 @@
         -o-transition: all 0.2s;
         transition: all 0.2s;
         border: 13px dashed #ddd;
+        z-index: 1000;
+        position: relative;
       }
       #holder.hover {
         cursor: copy;
@@ -210,6 +212,8 @@
         border: 1px solid #212121;
         padding: 8px;
         width: 320px;
+        z-index: 1000;
+        position: relative;
       }
       #keys .key-row {
         border-top: 1px solid #808080;
@@ -217,6 +221,7 @@
         border-right: 1px solid #808080;
         margin: 0 16px;
         padding: 16px;
+        transition: all 0.5s;
         height: 64px;
       }
       #keys .key-row:nth-child(even) {
@@ -248,7 +253,6 @@
         color: #808080;
       }
       .key-info {
-        margin-top: 6px;
         text-align: left;
         position: relative;
       }
@@ -259,10 +263,27 @@
       .key-info strong, .key-info input {
         float: left;
       }
-      .key-info strong, .key-info .final-link {
+
+      .key-info .key {
+        z-index: 200;
+        position: relative;
+      }
+      .hover .key {
+        z-index: 1 !important;
+      }
+      .key-info strong {
         margin-top: 11px;
         float: left;
         cursor: context-menu;
+      }
+      .final-link {
+        margin-top: 0;
+        display: none;
+        width: 450px;
+        font-size: 14px;
+        padding: 8px;
+        z-index: 200;
+        position: relative;
       }
       .hostname {
         width: 200px;
@@ -277,15 +298,23 @@
         font-weight: bold;
       }
       #holder.hover #holder-help {
-        opacity: 0.8 !important; 
+        opacity: 0.8 !important;
+        z-index: 5000;
       }
       #holder-help {
+        z-index: 1;
         transition: opacity 0.2s;
+      }
+      .hover .final-link {
+        z-index: 1 !important;
+      }
+      #holder-help * {
+        pointer-events: none;
       }
       #loader {
         margin-right: 10px;
       }
-      .icon-ok-circled, .icon-cancel-circled {
+      .icon-ok-circled, .icon-cancel-circled, .key-row .icon-spin1 {
         display: none;
       }
       .uploaded .icon-ok-circled, .failed .icon-cancel-circled {
@@ -293,9 +322,22 @@
         color: #212121;
         display: block;
         position: absolute;
-        top: -14px;
-        right: 0;
+        top: -9px;
+        right: -12px;
         text-align: right;
+        z-index: 1;
+      }
+      .uploading .icon-spin1 {
+        font-size: 32px;
+        float: right;
+        width: 64px;
+        padding: 0;
+        display: inline-block;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        position: relative;
+        line-height: 64px;
       }
       .uploaded {
         background-color: #AAFFAA !important;
@@ -337,15 +379,16 @@
             <ul id="keys-rows">
               <li data-id="-1" data-name="" data-path="" class="key-row key-row-orig" style="display: none">
                 <a class="icon-trash" href="#"></a>
+                <i class="icon-spin1 animate-spin"></i>
                 <div class="key-info">
                   <i class="icon-doc"></i>
                   <div class="filename"></div>
                   <strong><i class="icon-link"></i></strong>
                   <span class="hostname"></span>
                   <input class="key">
-                  <span class="final-link"></span>
-                  <i class="icon-ok-circled ok"></i>
-                  <i class="icon-cancel-circled ok"></i>
+                  <input class="final-link">
+                  <i class="icon-ok-circled"></i>
+                  <i class="icon-cancel-circled"></i>
                   <div class="clear"></div>
                 </div>
                 <div class="clear"></div>
@@ -447,7 +490,11 @@
 
           filelist = [];
 
+          status1.html('Ready to upload');
+          status2.html('file(s)');
+
           $('#keys-rows').hide();
+          $('.key-row input.key').prop('disabled', false);
 
           $('#keys-rows .key-clone').remove();
 
@@ -494,6 +541,9 @@
               maximized = false;
             }
 
+            if(height < 450) $('#help i').hide();
+            else $('#help i').show();
+
           }).find('h2 span').html(i);
 
 
@@ -532,20 +582,19 @@
           async.forEachLimit(filelist, 1, function(file, callback) {
 
             var row = $('.key-row[data-path="'+file.path+'"]');
-            var input = row.find('input');
+            var input = row.find('input.key');
             var hostname = row.find('.hostname');
+
+            row.addClass('uploading');
 
             hostname.hide();
             input.hide();
 
-            var key = input.val();
+            var key = encodeURIComponent(input.val());
             if(key[0] !== '/') key = '/'+key;
 
             var link = "http://"+hostname.html()+key.substr(1);
-            row.find('.final-link').html(link).click(function() {
-              console.log(link);
-              copyToClipboard(link);
-            }).show();
+            row.find('.final-link').val(link).show();
 
             var fileStream = fs.createReadStream(file.path);
 
@@ -558,7 +607,7 @@
 
             request.on('end', function(result) {
               console.log(result);
-              row.addClass('uploaded');
+              row.removeClass('uploading').addClass('uploaded');
               fileNum++;
               callback();
             });
@@ -570,7 +619,7 @@
             request.on('error', function(err) {
               fileNum++;
               console.log(err);
-              row.addClass('failed');
+              row.removeClass('uploading').addClass('failed');
               callback(err);
             });
 
